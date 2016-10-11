@@ -1,0 +1,11 @@
+/**
+ * https://code.visualstudio.com/docs/languages/jsconfig
+ */
+{
+  "compilerOptions": {
+    "target": "ES6"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
