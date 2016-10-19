@@ -5,8 +5,6 @@ let program = phantomjs.exec('loadpage.js',
   'http://gold.xitu.io/tag/JavaScript');
 let file = fs.createWriteStream('home.html');
 
-// program.stdout.pipe(text);
-
 let readable = program.stdout;
 
 program.stderr.pipe(process.stderr);

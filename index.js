@@ -1,38 +1,47 @@
 const sqlite3 = require('sqlite3');
-const request = require('request');
+// const request = require('request');
 const cheerio = require('cheerio');
-const iconv = require('iconv-lite');
+// const iconv = require('iconv-lite');
 const async = require('async');
+const phantomjs = require('phantomjs-prebuilt');
+const fs = require('fs');
 
 let db = new sqlite3.Database('./db/xs.db', function (err) {
   if (err) console.error(err);
 });
 
-let www = 'http://gold.xitu.io/tag/JavaScript';
-let chrome = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36';
-let options = {
-  headers: {
-    'User-Agent': chrome
-  },
-  url: www
-};
+let homepage = 'http://gold.xitu.io/tag/JavaScript';
+let loadhome = phantomjs.exec('./phantom/loadpage.js', homepage);
 
-request.get(options, function (error, response, body) {
-  if (!error && response.statusCode == 200) {
+let readable = loadhome.stdout;
+let body = '';
+readable.on('data', chunk => {
+  body += chunk;
+});
+
+loadhome.on('exit', code => {
+  if (body !== 'fail') {
     handleBody(body);
   } else {
-    console.error(error);
+    console.log('can not load homepage')
   }
 });
 
 function handleBody(body) {
   let $ = cheerio.load(body);
-  console.log(body);
   let li = $('body div.index-view  div.main  div.container ul li.entry-item');
-  console.log(li.text());
-  let test = $('body div:nth-child(0)');
-  console.log(test.text());
-  console.log(typeof test)
+  let links = [];
+  for (let i = 0; i < li.length; i++) {
+    links.push({
+      title: $('a', li[i]).text(),
+      url: $('a', li[i]).attr('href')
+    });
+    db.run('INSERT INTO article (title, url) VALUES($title, $url)', {
+      $title: $('a', li[i]).text(),
+      $url: $('a', li[i]).attr('href')
+    });
+  }
+  fs.writeFileSync('./db/data.json', JSON.stringify(links), { encoding: 'utf8' });
 }
 
 
