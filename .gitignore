@@ -88,5 +88,5 @@ $RECYCLE.BIN/
 
 # ==========================
 # tobe
-/crawler/script/info/*.json
+/db
 
