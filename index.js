@@ -41,10 +41,19 @@ function handleBody(body) {
       $url: $('a', li[i]).attr('href')
     });
   }
+  capture(links);
   fs.writeFileSync('./db/data.json', JSON.stringify(links), { encoding: 'utf8' });
 }
 
-
+function capture(list) {
+  let path = './db/';
+  for (let i = 0; i < list.length; i++) {
+    let work = phantomjs.exec('./phantom/capture.js', list[i].url, path);
+    work.on('exit', code => {
+      console.log(code);
+    })
+  }
+}
 
 
 
