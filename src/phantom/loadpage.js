@@ -7,6 +7,11 @@ if (system.args.length === 1) {
 }
 
 var url = system.args[1];
+// 超时处理
+page.settings.resourceTimeout = 30000;
+page.onResourceTimeout = function (request) {
+  console.error(JSON.stringify(request));
+}
 
 page.open(url, function (status) {
   if (status === "success") {

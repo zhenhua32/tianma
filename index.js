@@ -1,5 +1,5 @@
 const sqlite3 = require('sqlite3');
-// const request = require('request');
+const request = require('request');
 const cheerio = require('cheerio');
 // const iconv = require('iconv-lite');
 const async = require('async');

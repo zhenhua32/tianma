@@ -1,0 +1,4 @@
+SELECT num/36
+FROM package
+WHERE num%36=0
+ORDER BY num ASC;
